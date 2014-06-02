@@ -1,0 +1,26 @@
+---
+# Simple Drupal Development VM Playbook for CentOS 6.5
+#
+# This playbook will install Drupal on an CentOS-based LAMP stack for the development
+# of the web layer of GBIF.
+#
+# @author Burke Chih-Jen Ko, 2014
+# Modified from https://github.com/burkeker/drupal-dev-vm
+
+- hosts: all
+
+  vars_files:
+  - vars/main.yml
+
+  pre_tasks:
+  - include: tasks/init.yml
+
+  roles:
+    - burkeker.git
+    - burkeker.apache
+    - burkeker.mysql
+    - burkeker.php
+    - burkeker.php-mysql
+    - burkeker.composer
+    - burkeker.drush
+    - burkeker.drupal
