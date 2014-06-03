@@ -1,31 +1,20 @@
 ---
 # Simple Drupal Development VM Playbook for CentOS 6.5
 #
-# This playbook will install Drupal on an CentOS-based LAMP stack for the development
-# of the web layer of GBIF.
+# This playbook will install Drupal on a CentOS-based LAMP stack.
+#
+# @see http://labs.qandidate.com/blog/2013/11/21/installing-a-lamp-server-with-ansible-playbooks-and-roles/
+# @see http://www.slideshare.net/geerlingguy/local-development-on-virtual-machines-vagrant-virtualbox-and-ansible
 #
 # @author Burke Chih-Jen Ko, 2014
 
  - hosts: all
-   
-
-   handlers:
-
-   - name: restart iptables
-     service: name=iptables state=restarted
-
-   - name: restart httpd
-     service: name=httpd state=restarted
-
    tasks: 
-
-   - name: copy firewall template
-     copy: src=templates/etc/sysconfig/iptables dest=/etc/sysconfig/iptables owner=root group=root mode=0600
-     notify: restart iptables
-
-   - name: Install http and php etc
+   - name: Install LAMP stack
      yum: pkg={{ item }} state=installed
      with_items:
+        - mysql
+        - mysql-server
         - httpd
         - php
         - php-common
@@ -37,3 +26,12 @@
 
    - name: Ensure Apache running
      service: name=httpd state=started enabled=yes
+
+   - name: Ensure MySQL running
+     service: name=mysqld state=started enabled=yes
+     
+   - name: Add drush via PEAR channel
+     shell: pear channel-discover pear.drush.org || true
+     
+   - name: Install drush
+     shell: pear install -f drush/drush
