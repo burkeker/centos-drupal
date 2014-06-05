@@ -1,0 +1,10 @@
+---
+drush_version: master
+
+drupal_core_version: "7"
+
+# The path where Drupal will be downloaded and installed.
+drupal_core_path: "/var/www/d{{ drupal_core_version }}"
+
+drupal_domain: "d7.centos-{{ staging_env }}.local"
+drupal_site_name: "GBIF Drupal {{ staging_env }}"

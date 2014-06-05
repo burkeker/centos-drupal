@@ -1,0 +1,12 @@
+---
+- name: Install libselinux-python package
+  yum: pkg=libselinux-python state=installed
+  
+- name: Install required compilers and dev tools
+  yum: pkg={{ item }} state=installed
+  with_items:
+    - gcc
+    - gcc-c++
+    - autoconf
+    - automake
+    - git

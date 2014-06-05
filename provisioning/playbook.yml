@@ -1,37 +1,17 @@
 ---
 # Simple Drupal Development VM Playbook for CentOS 6.5
 #
-# This playbook will install Drupal on a CentOS-based LAMP stack.
+# This playbook will install Drupal on a CentOS-based LAMP stack and configure
+# a profiling and debugging environment.
 #
 # @see http://labs.qandidate.com/blog/2013/11/21/installing-a-lamp-server-with-ansible-playbooks-and-roles/
 # @see http://www.slideshare.net/geerlingguy/local-development-on-virtual-machines-vagrant-virtualbox-and-ansible
 #
 # @author Burke Chih-Jen Ko, 2014
 
- - hosts: all
-   tasks: 
-   - name: Install LAMP stack
-     yum: pkg={{ item }} state=installed
-     with_items:
-        - mysql
-        - mysql-server
-        - httpd
-        - php
-        - php-common
-        - php-xml
-        - php-mysql
-        - php-gd
-        - php-tidy
-        - php-pear
-
-   - name: Ensure Apache running
-     service: name=httpd state=started enabled=yes
-
-   - name: Ensure MySQL running
-     service: name=mysqld state=started enabled=yes
-     
-   - name: Add drush via PEAR channel
-     shell: pear channel-discover pear.drush.org || true
-     
-   - name: Install drush
-     shell: pear install -f drush/drush
+- hosts: all
+  roles:
+    - system
+    - webserver
+    - databases
+    - drupal

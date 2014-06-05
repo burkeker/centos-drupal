@@ -1,0 +1,11 @@
+---
+- name: Add drush via PEAR channel
+  shell: pear channel-discover pear.drush.org || true
+  
+- name: Install Console_Table as a drush dependency
+  shell: pear install Console_Table
+  register: console_table_result
+  ignore_errors: yes
+  
+- name: Install drush
+  shell: pear install -f drush/drush

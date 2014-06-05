@@ -33,9 +33,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # vb.customize ["modifyvm", :id, "--memory", "1024"]
   end
 
-  # totally insecure, but this is local dev: make the vagrant default the root key
-  # config.vm.provision "shell", inline: "sudo cp -r /home/vagrant/.ssh /root/.ssh"
-
   # Enable provisioning with Ansible.
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "provisioning/playbook.yml"

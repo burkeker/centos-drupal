@@ -1,13 +1,3 @@
 ---
-apache_create_vhosts: false
-mysql_root_password: ''
-drush_version: master
+staging_env: dev
 
-# The core version you want to use (e.g. 6.x, 7.x, 8.x).
-drupal_core_version: "7.x"
-
-# The path where Drupal will be downloaded and installed.
-drupal_core_path: "/var/www/drupal-{{ drupal_core_version }}-dev"
-
-drupal_domain: "d7.centos.local"
-drupal_site_name: "Drupal Test Site"

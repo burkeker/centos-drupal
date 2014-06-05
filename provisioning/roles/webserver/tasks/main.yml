@@ -1,0 +1,41 @@
+---
+- name: Install Apache and PHP modules
+  yum: pkg={{ item }} state=installed
+  with_items:
+    - httpd
+    - php
+    - php-common
+    - php-xml
+    - php-mysql
+    - php-gd
+    - php-tidy
+    - php-pear
+    - php-mbstring
+    - php-devel
+    - php-pecl-apc
+    - php-pecl-memcache
+
+- name: Set php_ini location for pear
+  shell: pear config-set php_ini /etc/php.ini
+
+- name: Set php_ini location for pecl
+  shell: pecl config-set php_ini /etc/php.ini
+
+- name: Install PHP module uploadprogress
+  shell: pecl install uploadprogress
+  
+- name: Copy php.ini
+  template: src=php.ini dest=/etc/php.ini
+  notify:
+    - restart apache
+
+- name: Install PHP module Xdebug
+  shell: pecl install Xdebug
+
+- name: Copy xdebug.ini
+  template: src=xdebug.ini dest=/etc/php.d/xdebug.ini
+  notify:
+    - restart apache
+
+- name: Ensure Apache running
+  service: name=httpd state=started enabled=yes
