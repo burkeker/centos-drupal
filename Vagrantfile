@@ -4,6 +4,13 @@
 require_relative 'vagrant.rb'
 include MyVars
 
+# Make sure the hostsupdater plugin is in place so the /etc/hosts file can be
+# updated automatically
+# @see http://stackoverflow.com/questions/19492738/demand-a-vagrant-plugin-within-the-vagrantfile
+unless Vagrant.has_plugin?("vagrant-hostsupdater")
+  raise 'Please do "$ vagrant plugin install vagrant-hostsupdater" before proceeding.'
+end
+
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
