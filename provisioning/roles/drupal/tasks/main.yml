@@ -9,3 +9,12 @@
   
 - name: Install drush
   shell: pear install -f drush/drush
+  
+- name: Clone portal-drupal7 repository
+  git: repo={{ drupal_repo }}
+       dest={{ drupal_core_path }}
+
+- name: Install virtual host
+  template: src=virt_portal.conf dest=/etc/httpd/conf.d/virt_portal.conf
+  notify:
+    - restart apache

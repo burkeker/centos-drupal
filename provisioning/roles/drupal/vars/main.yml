@@ -1,10 +1,13 @@
 ---
 drush_version: master
-
 drupal_core_version: "7"
-
-# The path where Drupal will be downloaded and installed.
 drupal_core_path: "/var/www/d{{ drupal_core_version }}"
-
 drupal_domain: "d7.centos-{{ staging_env }}.local"
 drupal_site_name: "GBIF Drupal {{ staging_env }}"
+drupal_repo: "https://github.com/burkeker/portal-drupal7.git"
+drupal_apache_access_log: "logs/portal-drupal7-access_log"
+drupal_apache_error_log: "logs/portal-drupal7-error_log"
+
+data_portal_base_url: "http://www.gbif-{{ staging_env }}.org"
+gbif_api_base_url: "http://api.gbif-{{ staging_env }}.org"
+gbif_api_version: "0.9"

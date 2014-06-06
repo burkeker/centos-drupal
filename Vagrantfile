@@ -1,13 +1,16 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+require_relative 'vagrant.rb'
+include MyVars
+
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "chef/centos-6.5"
 
   config.vm.box_check_update = true
-  config.vm.hostname = "d7.centos.local"
+  config.vm.hostname = "d7.centos-" + STAGINGENV + ".local"
 
   #config.vm.network "forwarded_port", guest: 80, host: 8080
 
@@ -26,7 +29,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider "virtualbox" do |vb|
     vb.gui = false
     vb.memory = 3072
-    vb.name = "centos_drupal7"
+    vb.name = "centos_drupal7_" + STAGINGENV
     vb.cpus = 2
   
     # Use VBoxManage to customize the VM. For example to change memory:
@@ -37,6 +40,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "provisioning/playbook.yml"
     ansible.sudo = true
+    ansible.extra_vars = {
+      staging_env: STAGINGENV
+    }
   end
 
 end
