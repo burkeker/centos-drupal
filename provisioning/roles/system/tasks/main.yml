@@ -1,6 +1,9 @@
 ---
 - name: Install libselinux-python package
   yum: pkg=libselinux-python state=installed
+
+- name: Install MySQL-python package
+  yum: pkg=MySQL-python state=installed
   
 - name: Install required compilers and dev tools
   yum: pkg={{ item }} state=installed

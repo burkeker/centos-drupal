@@ -1,4 +1,5 @@
 ---
+# @see http://arcadian83.livejournal.com/16386.html
 - name: Install Apache and PHP modules
   yum: pkg={{ item }} state=installed
   with_items:
@@ -21,16 +22,28 @@
 - name: Set php_ini location for pecl
   shell: pecl config-set php_ini /etc/php.ini
 
+- name: Test uploadprogress exists
+  command: /usr/bin/test -e /usr/lib64/php/modules/uploadprogress.so
+  register: uploadprogress_exists
+  ignore_errors: True
+
 - name: Install PHP module uploadprogress
   shell: pecl install uploadprogress
+  when: uploadprogress_exists|failed
   
 - name: Copy php.ini
   template: src=php.ini dest=/etc/php.ini
   notify:
     - restart apache
 
+- name: Test xdebug exists
+  command: /usr/bin/test -e /usr/lib64/php/modules/xdebug.so
+  register: xdebug_exists
+  ignore_errors: True
+
 - name: Install PHP module Xdebug
   shell: pecl install Xdebug
+  when: xdebug_exists|failed
 
 - name: Copy xdebug.ini
   template: src=xdebug.ini dest=/etc/php.d/xdebug.ini

@@ -1,14 +1,20 @@
 ---
+- name: Test the existence of drush
+  command: /usr/bin/drush
+  register: drush_existence
+  ignore_errors: True
+  
 - name: Add drush via PEAR channel
   shell: pear channel-discover pear.drush.org || true
+  when: drush_existence|failed
   
 - name: Install Console_Table as a drush dependency
   shell: pear install Console_Table
-  register: console_table_result
-  ignore_errors: yes
+  when: drush_existence|failed
   
 - name: Install drush
   shell: pear install -f drush/drush
+  when: drush_existence|failed
   
 - name: Clone portal-drupal7 repository
   git: repo={{ drupal_repo }}
@@ -18,3 +24,10 @@
   template: src=virt_portal.conf dest=/etc/httpd/conf.d/virt_portal.conf
   notify:
     - restart apache
+
+- name: Create a new database for Drupal
+  mysql_db: name={{ drupal_mysql_db }} state=present encoding=utf8 collation=utf8_general_ci
+
+# @see http://stackoverflow.com/questions/22958443/how-to-grant-mysql-server-administration-privileges-super-reload-with-ansi  
+- name: Create a MySQL user for Drupal
+  mysql_user: name={{ drupal_mysql_user }} password={{ drupal_mysql_passwd }} priv={{ drupal_mysql_privileges }} state=present

@@ -48,7 +48,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.playbook = "provisioning/playbook.yml"
     ansible.sudo = true
     ansible.extra_vars = {
-      staging_env: STAGINGENV
+      staging_env: STAGINGENV,
+      mysql_root_passwd: MYSQL_ROOT_PASSWD
     }
   end
 
