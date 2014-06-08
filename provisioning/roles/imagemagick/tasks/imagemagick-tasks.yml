@@ -1,0 +1,7 @@
+---
+- name: install imagemagick
+  yum: pkg={{ item }} state=installed
+  with_items:
+    - ImageMagick
+  notify:
+    - restart apache
