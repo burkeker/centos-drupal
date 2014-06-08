@@ -11,7 +11,13 @@ drupal_mysql_db: "portal_drupal7"
 drupal_mysql_privileges: "{{ drupal_mysql_db }}.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER,'CREATE TEMPORARY TABLES'"
 drupal_mysql_user: "portal_drupal7"
 drupal_mysql_passwd: "portal_drupal7"
+drupal_mysql_host: "localhost"
 
 data_portal_base_url: "http://www.gbif-{{ staging_env }}.org"
 gbif_api_base_url: "http://api.gbif-{{ staging_env }}.org"
 gbif_api_version: "0.9"
+
+gbif_ims_host: "filemaker.gbif.org" # No protocol needed here.
+gbif_ims_db: "IMS_NG"
+gbif_ims_user: "ims_user"
+gbif_ims_passwd: "ims_passwd"

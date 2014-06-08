@@ -20,6 +20,12 @@
   git: repo={{ drupal_repo }}
        dest={{ drupal_core_path }}
 
+- name: Proper permission for Drupal files
+  file: path={{ drupal_core_path }} state=directory owner=apache group=apache mode=0755 recurse=yes
+
+- name: Proper permission for Drupal site files
+  file: path={{ drupal_core_path }}/sites/default state=directory owner=apache group=apache mode=0775
+
 - name: Install virtual host
   template: src=virt_portal.conf dest=/etc/httpd/conf.d/virt_portal.conf
   notify:
@@ -31,3 +37,18 @@
 # @see http://stackoverflow.com/questions/22958443/how-to-grant-mysql-server-administration-privileges-super-reload-with-ansi  
 - name: Create a MySQL user for Drupal
   mysql_user: name={{ drupal_mysql_user }} password={{ drupal_mysql_passwd }} priv={{ drupal_mysql_privileges }} state=present
+
+- name: Test the existence of drush
+  command: /usr/bin/test -e {{ drupal_core_path }}/sites/default/settings.php
+  register: drupal_setting_exists
+  ignore_errors: True
+  
+- name: Creating settings.php
+  template: src=settings.php dest={{ drupal_core_path }}/sites/default/settings.php owner=apache group=apache mode=0775
+  when: drupal_setting_exists|failed
+  
+- name: Install Drupal using standard profile
+  shell: chdir={{ drupal_core_path }}/sites/default drush site-install standard -y
+  sudo: yes
+  sudo_user: apache
+  
