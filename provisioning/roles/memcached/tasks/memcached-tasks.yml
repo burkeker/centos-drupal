@@ -1,0 +1,15 @@
+---
+- name: install memcached packages
+  yum: pkg={{ item }} state=installed
+  with_items:
+    - memcached.x86_64
+    - php-pecl-memcache.x86_64
+  notify:
+    - restart apache
+
+- name: configuration
+  template: src=memcached.conf dest=/etc/sysconfig/memcached
+
+- name: ensure memcached running
+  service: name=memcached state=started enabled=yes
+

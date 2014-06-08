@@ -12,7 +12,6 @@
     - php-mbstring
     - php-devel
     - php-pecl-apc
-    - php-pecl-memcache
 
 - name: set php_ini location for pear
   shell: pear config-set php_ini /etc/php.ini

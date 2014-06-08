@@ -16,5 +16,6 @@
     - system
     - apache
     - php
+    - memcached
     - mysql
     - drupal
