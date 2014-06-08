@@ -60,6 +60,8 @@
   drupal_mysql_passwd: "portal_drupal7"
   drupal_mysql_host: "localhost"
 
+  drupal_user_0: admin
+  drupal_user_0_passwd: password
   drush_version: master
 
   data_portal_base_url: "http://www.gbif-{{ staging_env }}.org"

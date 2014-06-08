@@ -20,7 +20,7 @@
 - name: set php_ini location for pecl
   shell: pecl config-set php_ini /etc/php.ini
 
-- name: PHP | copy php.ini
+- name: copy php.ini
   template: src=php.ini dest=/etc/php.ini
   notify:
     - restart apache
@@ -34,7 +34,6 @@
   shell: pecl install uploadprogress
   when: uploadprogress_exists|failed
   
-
 - name:  xdebug | test xdebug exists
   command: /usr/bin/test -e /usr/lib64/php/modules/xdebug.so
   register: xdebug_exists
