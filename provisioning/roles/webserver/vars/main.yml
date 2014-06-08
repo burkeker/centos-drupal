@@ -1,3 +1,0 @@
----
-http_port: 80
-apache_create_vhosts: false

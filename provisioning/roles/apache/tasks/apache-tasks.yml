@@ -1,0 +1,14 @@
+---
+# @see http://arcadian83.livejournal.com/16386.html
+- name: install httpd packages
+  yum: pkg={{ item }} state=installed
+  with_items:
+    - httpd
+
+- name: ensure httpd running
+  service: name=httpd state=started enabled=yes
+
+- name: copy httpd.conf
+  template: src=httpd.conf dest=/etc/httpd/conf/httpd.conf
+  notify:
+    - restart apache

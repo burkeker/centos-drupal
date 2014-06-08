@@ -10,8 +10,11 @@
 # @author Burke Chih-Jen Ko, 2014
 
 - hosts: all
+  vars_files:
+    - settings.yml
   roles:
     - system
-    - webserver
-    - databases
+    - apache
+    - php
+    - mysql
     - drupal

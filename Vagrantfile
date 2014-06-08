@@ -1,27 +1,41 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-require_relative 'vagrant.rb'
-include MyVars
+# Drupal Deployment for GBIF Secretariat
+# This project aims at building a staging workflow for the Drupal development
+# in GBIF Secretariat. This is mainly for internal use as there may be settings
+# that only work within the environment at GBIFS. 
 
-# Make sure the hostsupdater plugin is in place so the /etc/hosts file can be
-# updated automatically
-# @see http://stackoverflow.com/questions/19492738/demand-a-vagrant-plugin-within-the-vagrantfile
-unless Vagrant.has_plugin?("vagrant-hostsupdater")
-  raise 'Please do "$ vagrant plugin install vagrant-hostsupdater" before proceeding.'
+# We use vagrant-hostsupdater to automatically add/remove lines in /etd/hosts
+if !Vagrant.has_plugin?("vagrant-hostsupdater")
+  puts "Plugin 'vagrant-hostsupdater' is required"
+  puts "This can be installed by running:"
+  puts
+  puts " vagrant plugin install vagrant-hostsupdater"
+  puts
+  exit
 end
 
+# Find the current directory
+vagrant_dir = File.expand_path(File.dirname(__FILE__))
+conf_file = vagrant_dir + '/provisioning/settings.yml'
+
+# Include configuration & credentials from settings.yml
+require 'yaml'
+conf = YAML::load_file(conf_file)
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "chef/centos-6.5"
 
   config.vm.box_check_update = true
-  config.vm.hostname = "d7.centos-" + STAGINGENV + ".local"
+  config.vm.hostname = "d" + conf['drupal_core_version'] + "." + conf['box_os'] + "-" + conf['staging_env'] + ".local"
 
   #config.vm.network "forwarded_port", guest: 80, host: 8080
 
-  config.vm.network "private_network", ip: "10.1.1.3"
+  config.vm.network "private_network", ip: conf['box_ip_address']
 
   # If true, then any SSH connections made will enable agent forwarding.
   # Default value: false
@@ -36,7 +50,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provider "virtualbox" do |vb|
     vb.gui = false
     vb.memory = 3072
-    vb.name = "centos_drupal7_" + STAGINGENV
+    vb.name = conf['project_machine_name'] + conf['drupal_core_version'] + "_" + conf['staging_env']
     vb.cpus = 2
   
     # Use VBoxManage to customize the VM. For example to change memory:
@@ -47,10 +61,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "provisioning/playbook.yml"
     ansible.sudo = true
-    ansible.extra_vars = {
-      staging_env: STAGINGENV,
-      mysql_root_passwd: MYSQL_ROOT_PASSWD
-    }
   end
 
 end

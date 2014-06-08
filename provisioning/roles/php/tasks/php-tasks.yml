@@ -1,9 +1,7 @@
 ---
-# @see http://arcadian83.livejournal.com/16386.html
-- name: Install Apache and PHP modules
+- name: install PHP packages
   yum: pkg={{ item }} state=installed
   with_items:
-    - httpd
     - php
     - php-common
     - php-xml
@@ -16,39 +14,37 @@
     - php-pecl-apc
     - php-pecl-memcache
 
-- name: Set php_ini location for pear
+- name: set php_ini location for pear
   shell: pear config-set php_ini /etc/php.ini
 
-- name: Set php_ini location for pecl
+- name: set php_ini location for pecl
   shell: pecl config-set php_ini /etc/php.ini
 
-- name: Test uploadprogress exists
-  command: /usr/bin/test -e /usr/lib64/php/modules/uploadprogress.so
-  register: uploadprogress_exists
-  ignore_errors: True
-
-- name: Install PHP module uploadprogress
-  shell: pecl install uploadprogress
-  when: uploadprogress_exists|failed
-  
-- name: Copy php.ini
+- name: PHP | copy php.ini
   template: src=php.ini dest=/etc/php.ini
   notify:
     - restart apache
 
-- name: Test xdebug exists
+- name:  uploadprogress | test uploadprogress exists
+  command: /usr/bin/test -e /usr/lib64/php/modules/uploadprogress.so
+  register: uploadprogress_exists
+  ignore_errors: True
+
+- name:  uploadprogress | install PHP module uploadprogress
+  shell: pecl install uploadprogress
+  when: uploadprogress_exists|failed
+  
+
+- name:  xdebug | test xdebug exists
   command: /usr/bin/test -e /usr/lib64/php/modules/xdebug.so
   register: xdebug_exists
   ignore_errors: True
 
-- name: Install PHP module Xdebug
+- name:  xdebug | install PHP module Xdebug
   shell: pecl install Xdebug
   when: xdebug_exists|failed
 
-- name: Copy xdebug.ini
+- name:  xdebug | copy xdebug.ini
   template: src=xdebug.ini dest=/etc/php.d/xdebug.ini
   notify:
     - restart apache
-
-- name: Ensure Apache running
-  service: name=httpd state=started enabled=yes
