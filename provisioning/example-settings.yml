@@ -25,7 +25,6 @@
   php_date_timezone: Europe/Copenhagen
   php_default_latitude: 55.7022
   php_default_longitude: 12.5592
-  php_error_reporting: "E_ALL & ~E_DEPRECATED"
 
 # PHP APC settings  
   apc_rfc1867: '1'
@@ -39,6 +38,9 @@
 # MySQL settings  
   mysql_root_passwd: rootpassword
   mysql_port: 3306
+  mysql_admin_user: cent
+  mysql_admin_passwd: centpwd
+  mysql_ammin_privileges: "*.*:ALL,GRANT"
 
 # MySQL my.cnf settings
   mysql_max_allowed_packet: 128M

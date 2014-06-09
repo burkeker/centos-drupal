@@ -2,6 +2,10 @@
 - name: Install libselinux-python package
   yum: pkg=libselinux-python state=installed
 
+# As the dev set up we place the switch here for selinux
+- name: Set selinux status
+  selinux: state=disabled
+
 - name: Install required compilers and dev tools
   yum: pkg={{ item }} state=installed
   with_items:

@@ -20,3 +20,8 @@
   notify:
   - restart mysql
 
+- name: create an admin user
+  mysql_user: name={{ mysql_admin_user }} password={{ mysql_admin_passwd }} priv={{ mysql_admin_privileges }} state=present
+
+- name: create an admin user
+  mysql_user: name={{ mysql_admin_user }} password={{ mysql_admin_passwd }} priv={{ mysql_admin_privileges }} host={{ mysql_admin_allowed_host }} state=present
