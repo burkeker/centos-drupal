@@ -49,7 +49,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provider "virtualbox" do |vb|
     vb.gui = false
-    vb.memory = 3072
+    vb.memory = conf['box_ram']
     vb.name = conf['project_machine_name'] + conf['drupal_core_version'] + "_" + conf['staging_env']
     vb.cpus = 2
   

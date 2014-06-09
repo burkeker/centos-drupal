@@ -1,17 +1,23 @@
 ---
 # This is an example of settings.yml. Make a copy of this file and rename it as
 # settings.yml for the settings to take effect.
-  
+
+# Roles switch
+  xhprof: "Y"
+  xhprof_ui: "ui" # Choose 'ui' to use the one from Facebook, 'io' to use a better-looking but pre-release one.
+
 # System settings
   project_machine_name: 'centos_drupal'
   staging_env: 'dev'
   box_os: 'centos'
   box_ip_address: '10.1.1.3'
+  box_ram: 2048
 
 # Apache settings
   http_port: 80
   http_ServerAdmin: 'root@localhost'
   apache_create_vhosts: false
+  http_base: "/var/www"
   
 # php.ini settings
   php_memory_limit: 512M
@@ -34,13 +40,19 @@
   
 # PHP XDebug settings
   php_xdebug_remote_enable: 1
+  
+# PHP XHProf settings
+  php_xhprof_doc_base: xhgui
+  php_xhprof_prepend: "/var/www/{{ php_xhprof_doc_base }}/external/header.php"
+  php_xhprof_ServerName: "{{ php_xhprof_doc_base }}.{{ box_os }}-{{ staging_env }}.local"
 
 # MySQL settings  
   mysql_root_passwd: rootpassword
   mysql_port: 3306
   mysql_admin_user: cent
   mysql_admin_passwd: centpwd
-  mysql_ammin_privileges: "*.*:ALL,GRANT"
+  mysql_admin_privileges: "*.*:ALL,GRANT"
+  mysql_admin_allowed_host: "%"
 
 # MySQL my.cnf settings
   mysql_max_allowed_packet: 128M

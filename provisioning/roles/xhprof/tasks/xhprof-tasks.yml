@@ -4,25 +4,16 @@
   register: xhprof_exists
   ignore_errors: True
 
-- name: install graphviz
-  yum: pkg={{ item }} state=installed
-  with_items:
-    - graphviz.x86_64
-    - graphviz-php.x86_64
-  when: xhprof_exists|failed
-  
 - name: set preferred_state for pear
-  command: pear config-set preferred_state beta
+  command: pecl config-set preferred_state beta
   when: xhprof_exists|failed
 
 - name: install xhprof
   command: pecl install xhprof
   when: xhprof_exists|failed
 
-- name: copy xhprof.ini
-  template: src=xhprof.ini dest=/etc/php.d/xhprof.ini
-  notify:
-    - restart apache
+- name:  remove redundent line
+  lineinfile: dest=/etc/php.ini line="extension=\"xhprof.so\"" state=absent
 
 - name: test whether /tmp/xhprof exists
   command: /usr/bin/test -e /tmp/xhprof
@@ -36,35 +27,7 @@
     - chmod 777 /tmp/xhprof
   when: xhprof_tmp_exists|failed
 
-# XHProf UI is a GUI for the XHProf PHP extension, using a database backend, and pretty graphs to make it easy to use and interpret.
-# @see http://webadvent.org/2010/profiling-with-xhgui-by-paul-reinheimer
-# @see http://business-it-consultant.co.uk/blog/install-xhprof-centos-55-drupal-7-find-bootlenecks-your-application
-# @see http://php-webdeveloper.com/?p=38
-- name: get xhprof_html package
-  git: repo=https://github.com/preinheimer/xhprof dest=/var/www/xhprof_html
-
-- name: copy configuration file
-  template: src=config.php dest=/var/www/xhprof_html/xhprof_lib/config.php
-
-- name: create xhprof_html application database
-  mysql_db: name=xhprof state=present login_password={{ mysql_root_passwd }} login_user=root
-
-- name: copy SQL install script
-  copy: src=install.sql dest=/var/www/xhprof_html/install.sql
-
-- name: run SQL install script
-  shell: mysql --user={{ mysql_admin_user }} --password={{ mysql_admin_passwd }} xhprof < /var/www/xhprof_html/install.sql
-
-- name: ensure Xhprof directory permissions
-  file: path=/var/www/xhprof_html owner=apache group=apache mode=0777 recurse=yes
-
-- name: check virtual host for Xhprof
-  command: /usr/bin/test -e /etc/httpd/conf.d/virt_xhprof_html.conf
-  register: xhprof_vhost_exists
-  ignore_errors: True
-
-- name: add virtual host
-  template: src=virt_xhprof.conf dest=/etc/httpd/conf.d/virt_xhprof.conf
-  when: xhprof_vhost_exists|failed
+- name: copy xhprof.ini
+  template: src=xhprof.ini dest=/etc/php.d/xhprof.ini
   notify:
     - restart apache

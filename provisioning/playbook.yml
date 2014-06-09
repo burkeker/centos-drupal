@@ -18,5 +18,6 @@
     - php
     - memcached
     - mysql
-    - xhprof
     - drupal
+    - xhprof
+    - xhgui

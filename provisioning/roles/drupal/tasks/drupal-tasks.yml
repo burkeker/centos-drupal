@@ -27,7 +27,7 @@
   file: path={{ drupal_core_path }}/sites/default state=directory owner=apache group=apache mode=0775
 
 - name:  apache | install virtual host
-  template: src=virt_portal.conf dest=/etc/httpd/conf.d/virt_portal.conf
+  template: src=virt_d7.conf dest=/etc/httpd/conf.d/virt_d7.conf
   notify:
     - restart apache
 

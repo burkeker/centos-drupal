@@ -1,0 +1,30 @@
+---
+# Additional pre-release XHProf UI
+# @see https://github.com/gajus/xhprof.io
+- name:  xhprof.io | get xhprof.io package
+  git: repo=https://github.com/gajus/xhprof.io.git dest=/var/www/xhprof-io
+
+- name:  MySQL | set up a database for xhprof.io
+  mysql_db: name=xhprof_io state=present login_password={{ mysql_root_passwd }} login_user=root
+
+- name:  MySQL | copy SQL install script
+  copy: src=install.xhprof.io.sql dest=/var/www/xhprof-io/install.sql
+
+- name:  MySQL | run SQL install script
+  shell: mysql --user={{ mysql_admin_user }} --password={{ mysql_admin_passwd }} xhprof_io < /var/www/xhprof-io/install.sql
+
+- name: Copy the configurations
+  template: src=config-xhprof.io.inc.php dest=/var/www/xhprof-io/xhprof/includes/config.inc.php
+
+- name:  Apache | ensure xhprof-io directory permissions
+  file: path=/var/www/xhprof-io owner=apache group=apache mode=0777 recurse=yes
+
+- name:  Apache | add virtual host
+  template: src=virt_xhprof.io.conf dest=/etc/httpd/conf.d/virt_xhprof_io.conf
+  notify:
+    - restart apache
+
+- name:  PHP | add xhprof configuration
+  template: src=xhprof.io.ini dest=/etc/php.d/xhprof.io.ini
+  notify:
+    - restart apache
