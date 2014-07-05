@@ -1,0 +1,2 @@
+---
+- include: gbif-drupal-tasks.yml

@@ -1,0 +1,78 @@
+---
+- name:  drush | test the existence of drush
+  command: /usr/bin/drush
+  register: drush_existence
+  ignore_errors: True
+  
+- name:  drush | add drush via PEAR channel
+  shell: pear channel-discover pear.drush.org || true
+  when: drush_existence|failed
+  
+- name:  drush | install Console_Table as a drush dependency
+  shell: pear install Console_Table
+  when: drush_existence|failed
+  
+- name:  drush | install drush
+  shell: pear install -f drush/drush
+  when: drush_existence|failed
+  
+- name: clone gbif-drupal repository
+  git: repo={{ drupal_repo }}
+       dest={{ drupal_core_path }}
+
+- name: download Drupal core from drupal.org
+  get_url: url=http://ftp.drupal.org/files/projects/drupal-{{ drupal_core_version }}.{{ drupal_current_version }}.tar.gz dest=~root
+
+- name: extract Drupal core to the cloned repository
+  command: /bin/tar xvzfo ~root/drupal-{{ drupal_core_version }}.{{ drupal_current_version }}.tar.gz -C {{ drupal_core_path }} --strip 1
+
+- name: checkout gitignore setting
+  command: /usr/bin/git checkout -- .gitignore
+  args:
+    chdir: "{{ drupal_core_path }}"
+
+- name: checkout develop branch
+  command: /usr/bin/git checkout develop
+  args:
+    chdir: "{{ drupal_core_path }}"
+    
+- name: copy files from drupal-edit.gbif-dev.org
+  get_url: url=http://drupal-edit.gbif-dev.org:8090/files.tar.gz dest=~root
+  
+- name: extract files to default/files
+  command: /bin/tar xvzfo ~root/files.tar.gz -C {{ drupal_core_path }}/sites/default
+
+- name: proper permission for Drupal site files
+  file: path={{ drupal_core_path }}/sites/default/files state=directory owner=apache group=apache recurse=yes
+
+- name:  apache | install virtual host
+  template: src=virt_d7.conf dest=/etc/httpd/conf.d/virt_d7.conf
+  notify:
+    - restart apache
+
+- name:  mysql | create a new database for Drupal
+  mysql_db: name={{ drupal_mysql_db }} state=present encoding=utf8 collation=utf8_general_ci
+
+# @see http://stackoverflow.com/questions/22958443/how-to-grant-mysql-server-administration-privileges-super-reload-with-ansi  
+- name:  mysql | create a MySQL user for Drupal
+  mysql_user: name={{ drupal_mysql_user }} password={{ drupal_mysql_passwd }} priv={{ drupal_mysql_privileges }} state=present
+  
+- name: download GBIF Drupal sql dump
+  get_url: url=http://drupal-edit.gbif-dev.org:8090/gbif-drupal.sql.gz dest=~root
+  
+- name: extract GBIF Drupal sql dump
+  command: /bin/gunzip ~root/gbif-drupal.sql.gz
+  args:
+    chdir: ~root
+
+- name: restore GBIF Drupal sql dump to local DB
+  shell: mysql --user={{ mysql_admin_user }} --password={{ mysql_admin_passwd }} {{ drupal_mysql_db }} < ~root/gbif-drupal.sql
+
+- name: test the existence of settings.php
+  command: /usr/bin/test -e {{ drupal_core_path }}/sites/default/settings.php
+  register: drupal_setting_exists
+  ignore_errors: True
+  
+- name: creating settings.php
+  template: src=settings.php dest={{ drupal_core_path }}/sites/default/settings.php owner=root group=root mode=0644
+  when: drupal_setting_exists|failed

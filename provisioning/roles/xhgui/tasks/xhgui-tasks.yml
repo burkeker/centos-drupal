@@ -24,7 +24,6 @@
 - name:  MySQL | run SQL install script
   shell: mysql --user={{ mysql_admin_user }} --password={{ mysql_admin_passwd }} xhprof < /var/www/{{ php_xhprof_doc_base }}/install.sql
 
-
 # Add php value to the profiled host
 - name:  To profile the d7 site
   lineinfile: dest=/etc/httpd/conf.d/virt_d7.conf line="php_admin_value auto_prepend_file \"/var/www/xhgui/external/header.php\"" state=present insertbefore="^</VirtualHost>"
