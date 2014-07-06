@@ -3,6 +3,8 @@ centos-drupal
 
 This is an attempt of sharing development environment which reduces the cost of maintaining a local LAMP stack and avoid confusion due to slightly different configurations among developers. It is built for continuous delivery/integration of the Drupal web layer within GBIF Secretariat.
 
+Please note that the Drupal content is not accessible to non-staff of GBIFS. You may use the 'drupal' role, instead of 'gbif-drupal', to setup with a standard Drupal profile.
+
 This project uses:
 - [**Vagrant**](http://www.vagrantup.com/downloads) for building the development environment, with *vagrant-hostsupdater* plugin required;
 - [**Ansible**](http://docs.ansible.com/intro_installation.html) for configuration management;
