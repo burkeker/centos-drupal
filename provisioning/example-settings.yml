@@ -18,6 +18,8 @@
   http_ServerAdmin: 'root@localhost'
   apache_create_vhosts: false
   http_base: "/var/www"
+  http_user: 'vagrant'
+  http_group: 'vagrant'
   
 # php.ini settings
   php_memory_limit: 512M

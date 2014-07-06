@@ -16,8 +16,8 @@
     - system
     - apache
     - php
-#    - memcached
+    - memcached
     - mysql
     - gbif-drupal
-#    - xhprof
-#    - xhgui
+    - xhprof
+    - xhgui
