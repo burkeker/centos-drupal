@@ -15,10 +15,37 @@
 - name:  drush | install drush
   shell: pear install -f drush/drush
   when: drush_existence|failed
-  
-- name: clone gbif-drupal repository
-  git: repo={{ drupal_repo }}
-       dest={{ drupal_core_path }}
+
+# With synced_folder created by Vagrant, we have to find alternatives to clone the repo.  
+#- name:  git | clone gbif-drupal repository
+#  git: repo=https://github.com/gbif/gbif-drupal.git dest={{ drupal_core_path }}
+
+- name:  git | initialise an empty repository
+  command: /usr/bin/git init
+  args:
+    chdir: "{{ drupal_core_path }}"
+
+# @todo to complete the conditional here so 'vagrant provision' can be repeated.
+- name:  git | remote if the origin is already set
+  command: /usr/bin/git remote rm origin
+  args:
+    chdir: "{{ drupal_core_path }}"
+  ignore_errors: True
+
+- name:  git | wire gbif-drupal repository
+  command: /usr/bin/git remote add origin https://github.com/gbif/gbif-drupal.git
+  args:
+    chdir: "{{ drupal_core_path }}"
+
+- name:  git | fetch gbif-drupal repository
+  command: /usr/bin/git fetch origin
+  args:
+    chdir: "{{ drupal_core_path }}"
+
+- name: checkout develop branch
+  command: /usr/bin/git checkout develop
+  args:
+    chdir: "{{ drupal_core_path }}"
 
 - name: download Drupal core from drupal.org
   get_url: url=http://ftp.drupal.org/files/projects/drupal-{{ drupal_core_version }}.{{ drupal_current_version }}.tar.gz dest=~root
@@ -31,19 +58,16 @@
   args:
     chdir: "{{ drupal_core_path }}"
 
-- name: checkout develop branch
-  command: /usr/bin/git checkout develop
-  args:
-    chdir: "{{ drupal_core_path }}"
-    
 - name: copy files from drupal-edit.gbif-dev.org
   get_url: url=http://drupal-edit.gbif-dev.org:8090/files.tar.gz dest=~root
   
 - name: extract files to default/files
   command: /bin/tar xvzfo ~root/files.tar.gz -C {{ drupal_core_path }}/sites/default
 
-- name: proper permission for Drupal site files
-  file: path={{ drupal_core_path }}/sites/default/files state=directory owner=apache group=apache recurse=yes
+# For use in actual delopyment
+# VirtualBox doesn't allow setting permission within synced_folder
+#- name: proper permission for Drupal site files
+#  file: path={{ drupal_core_path }}/sites/default/files state=directory owner=apache group=apache recurse=yes
 
 - name:  apache | install virtual host
   template: src=virt_d7.conf dest=/etc/httpd/conf.d/virt_d7.conf
@@ -72,7 +96,13 @@
   command: /usr/bin/test -e {{ drupal_core_path }}/sites/default/settings.php
   register: drupal_setting_exists
   ignore_errors: True
-  
+
+# With synced_folder enabled, templating directly into synced_folder will return invalide selinux context
+# @todo to be reported.   
+- name: templating settings.php
+  template: src=settings.php dest=~root/settings.php owner=root group=root mode=0644
+  when: drupal_setting_exists|failed  
+
 - name: creating settings.php
-  template: src=settings.php dest={{ drupal_core_path }}/sites/default/settings.php owner=root group=root mode=0644
+  command: /bin/cp ~root/settings.php {{ drupal_core_path }}/sites/default/settings.php
   when: drupal_setting_exists|failed

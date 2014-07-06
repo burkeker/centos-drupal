@@ -33,7 +33,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box_check_update = true
   config.vm.hostname = "d" + conf['drupal_core_version'] + "." + conf['box_os'] + "-" + conf['staging_env'] + ".local"
 
-  #config.vm.network "forwarded_port", guest: 80, host: 8080
+  config.vm.network "forwarded_port", guest: 80, host: 8083
 
   config.vm.network "private_network", ip: conf['box_ip_address']
 
@@ -46,6 +46,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
+  # Setting permission on synced_folder doesn't work on VirtualBox.
+  config.vm.synced_folder "~/dev/git/gbif-drupal", "/var/www/d7", create: true, owner: conf['http_user'], group: conf['http_group'], mount_options: ["dmode=755", "fmode=644"]
 
   config.vm.provider "virtualbox" do |vb|
     vb.gui = false
@@ -62,5 +64,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.playbook = "provisioning/playbook.yml"
     ansible.sudo = true
   end
-
+  
 end
