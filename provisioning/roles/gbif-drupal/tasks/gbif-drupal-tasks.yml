@@ -109,3 +109,8 @@
 - name: creating settings.php
   command: /bin/cp ~root/settings.php {{ drupal_core_path }}/sites/default/settings.php
   when: drupal_setting_exists|failed
+
+#- name: wake up the website
+#  command: /usr/bin/wget http://{{ drupal_domain }}
+#  args:
+#    chdir: ~root

@@ -1,0 +1,2 @@
+---
+- include: drupal-static-tasks.yml

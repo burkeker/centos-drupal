@@ -1,0 +1,32 @@
+---
+# With synced_folder created by Vagrant, we have to find alternatives to clone the repo.  
+#- name:  git | clone gbif-drupal repository
+#  git: repo=https://github.com/gbif/gbif-drupal.git dest={{ drupal_core_path }}
+
+- name: ensure the directory exists
+  file: path={{ drupal_core_path }} state=directory
+
+# For use in actual delopyment
+# VirtualBox doesn't allow setting permission within synced_folder
+#- name: proper permission for Drupal site files
+#  file: path={{ drupal_core_path }}/sites/default/files state=directory owner=apache group=apache recurse=yes
+
+- name:  apache | install virtual host
+  template: src=virt_d7.conf dest=/etc/httpd/conf.d/virt_d7.conf
+  notify:
+    - restart apache
+
+- name: test the existence of index.html
+  command: /usr/bin/test -e {{ drupal_core_path }}/index.html
+  register: drupal_static_exists
+  ignore_errors: True
+
+# With synced_folder enabled, templating directly into synced_folder will return invalide selinux context
+# @todo to be reported.   
+- name: creating static index.html
+  template: src=index.html dest=~root/index.html owner=root group=root mode=0644
+  when: drupal_static_exists|failed  
+
+- name: moving static index.html
+  command: /bin/cp ~root/index.html {{ drupal_core_path }}/
+  when: drupal_static_exists|failed
