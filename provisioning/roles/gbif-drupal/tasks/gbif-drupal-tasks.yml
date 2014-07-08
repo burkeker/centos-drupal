@@ -20,6 +20,9 @@
 #- name:  git | clone gbif-drupal repository
 #  git: repo=https://github.com/gbif/gbif-drupal.git dest={{ drupal_core_path }}
 
+- name: ensure the directory exists
+  file: path={{ drupal_core_path }} state=directory
+
 - name:  git | initialise an empty repository
   command: /usr/bin/git init
   args:
