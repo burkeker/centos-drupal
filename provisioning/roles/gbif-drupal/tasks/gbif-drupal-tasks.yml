@@ -20,6 +20,9 @@
 #- name:  git | clone gbif-drupal repository
 #  git: repo=https://github.com/gbif/gbif-drupal.git dest={{ drupal_core_path }}
 
+- name: ensure the directory exists
+  file: path={{ drupal_core_path }} state=directory
+
 - name:  git | initialise an empty repository
   command: /usr/bin/git init
   args:
@@ -69,11 +72,6 @@
 #- name: proper permission for Drupal site files
 #  file: path={{ drupal_core_path }}/sites/default/files state=directory owner=apache group=apache recurse=yes
 
-- name:  apache | install virtual host
-  template: src=virt_d7.conf dest=/etc/httpd/conf.d/virt_d7.conf
-  notify:
-    - restart apache
-
 - name:  mysql | create a new database for Drupal
   mysql_db: name={{ drupal_mysql_db }} state=present encoding=utf8 collation=utf8_general_ci
 
@@ -106,3 +104,16 @@
 - name: creating settings.php
   command: /bin/cp ~root/settings.php {{ drupal_core_path }}/sites/default/settings.php
   when: drupal_setting_exists|failed
+
+- name:  apache | install virtual host
+  template: src=virt_d7.conf dest=/etc/httpd/conf.d/virt_d7.conf
+  notify:
+    - restart apache
+
+- name:  apache | restart
+  command: /sbin/service httpd restart
+
+- name: wake up the website
+  command: /usr/bin/wget http://{{ drupal_domain }}
+  args:
+    chdir: ~root

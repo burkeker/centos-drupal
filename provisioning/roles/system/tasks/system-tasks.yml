@@ -16,3 +16,4 @@
     - git
     - lsof
     - telnet
+    - strace
