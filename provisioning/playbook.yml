@@ -18,6 +18,7 @@
     - php
 #    - memcached
     - mysql
-    - gbif-drupal
+    - drupal
+#    - gbif-drupal
 #    - xhprof
 #    - xhgui

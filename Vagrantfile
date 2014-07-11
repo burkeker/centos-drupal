@@ -28,7 +28,7 @@ conf = YAML::load_file(conf_file)
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "chef/centos-6.5"
+  config.vm.box = "centos65-x86_64-20140116"
 
   config.vm.box_check_update = true
   config.vm.hostname = "d" + conf['drupal_core_version'] + "." + conf['box_os'] + "-" + conf['staging_env'] + ".local"
@@ -47,7 +47,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
   # Setting permission on synced_folder doesn't work on VirtualBox.
-  config.vm.synced_folder "~/dev/git/gbif-drupal", "/var/www/d7", create: true, owner: conf['http_user'], group: conf['http_group'], mount_options: ["dmode=755", "fmode=644"]
+  #config.vm.synced_folder "~/dev/git/gbif-drupal", "/var/www/d7", create: true, owner: conf['http_user'], group: conf['http_group'], mount_options: ["dmode=755", "fmode=644"]
 
   config.vm.provider "virtualbox" do |vb|
     vb.gui = false

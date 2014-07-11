@@ -15,13 +15,15 @@
 - name:  drush | install drush
   shell: pear install -f drush/drush
   when: drush_existence|failed
-  
-- name: clone portal-drupal7 repository
-  git: repo={{ drupal_repo }}
-       dest={{ drupal_core_path }}
 
-- name: proper permission for Drupal files
-  file: path={{ drupal_core_path }} state=directory owner=apache group=apache mode=0755 recurse=yes
+- name: ensure the directory exists
+  file: path={{ drupal_core_path }} state=directory
+  
+- name: download Drupal core from drupal.org
+  get_url: url=http://ftp.drupal.org/files/projects/drupal-{{ drupal_core_version }}.{{ drupal_current_version }}.tar.gz dest=~root
+
+- name: extract Drupal core to the cloned repository
+  command: /bin/tar xvzfo ~root/drupal-{{ drupal_core_version }}.{{ drupal_current_version }}.tar.gz -C {{ drupal_core_path }} --strip 1
 
 - name: proper permission for Drupal site files
   file: path={{ drupal_core_path }}/sites/default state=directory owner=apache group=apache mode=0775
@@ -49,5 +51,5 @@
   
 - name: install Drupal using standard profile
   shell: chdir={{ drupal_core_path }}/sites/default drush site-install standard -y --account-name={{ drupal_user_0 }} --account-pass={{ drupal_user_0_passwd }}
-  sudo: yes
-  sudo_user: apache
+#  sudo: yes
+#  sudo_user: apache
