@@ -25,8 +25,8 @@
 - name: extract Drupal core to the cloned repository
   command: /bin/tar xvzfo ~root/drupal-{{ drupal_core_version }}.{{ drupal_current_version }}.tar.gz -C {{ drupal_core_path }} --strip 1
 
-- name: proper permission for Drupal site files
-  file: path={{ drupal_core_path }}/sites/default state=directory owner=apache group=apache mode=0775
+#- name: proper permission for Drupal site files
+#  file: path={{ drupal_core_path }}/sites/default state=directory owner=apache group=apache mode=0775
 
 - name:  apache | install virtual host
   template: src=virt_d7.conf dest=/etc/httpd/conf.d/virt_d7.conf
@@ -45,8 +45,12 @@
   register: drupal_setting_exists
   ignore_errors: True
   
+#- name: creating settings.php
+#  template: src=settings.php dest={{ drupal_core_path }}/sites/default/settings.php owner=apache group=apache mode=0775
+#  when: drupal_setting_exists|failed
+
 - name: creating settings.php
-  template: src=settings.php dest={{ drupal_core_path }}/sites/default/settings.php owner=apache group=apache mode=0775
+  template: src=settings.php dest={{ drupal_core_path }}/sites/default/settings.php
   when: drupal_setting_exists|failed
   
 - name: install Drupal using standard profile

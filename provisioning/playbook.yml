@@ -20,5 +20,5 @@
     - mysql
     - drupal
 #    - gbif-drupal
-#    - xhprof
-#    - xhgui
+    - xhprof
+    - xhgui
