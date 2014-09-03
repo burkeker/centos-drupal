@@ -14,11 +14,11 @@
     - settings.yml
   roles:
     - system
-#    - apache
-#    - php
+    - apache
+    - php
 #    - memcached
-#    - mysql
+    - mysql
 #    - drupal
-#    - gbif-drupal
+    - gbif-drupal
 #    - xhprof
 #    - xhgui
