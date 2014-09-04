@@ -28,7 +28,8 @@ conf = YAML::load_file(conf_file)
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "centos65-x86_64-20140116"
+  config.vm.box = "centos-6.5"
+  #config.vm.box_url = "https://github.com/2creatives/vagrant-centos/releases/download/v0.1.0/centos64-x86_64-20131030.box"
 
   config.vm.box_check_update = true
   config.vm.hostname = "d" + conf['drupal_core_version'] + "." + conf['box_os'] + "-" + conf['staging_env'] + ".local"
