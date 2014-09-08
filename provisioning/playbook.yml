@@ -16,7 +16,7 @@
     - system
     - apache
     - php
-#    - memcached
+    - memcached
     - mysql
 #    - drupal
     - gbif-drupal

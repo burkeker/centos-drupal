@@ -28,7 +28,7 @@ conf = YAML::load_file(conf_file)
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "centos-6.5"
+  config.vm.box = "chef/centos-6.5"
   #config.vm.box_url = "https://github.com/2creatives/vagrant-centos/releases/download/v0.1.0/centos64-x86_64-20131030.box"
 
   config.vm.box_check_update = true
@@ -49,13 +49,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # config.vm.synced_folder "../data", "/vagrant_data"
   # Setting permission on synced_folder doesn't work on VirtualBox.
   #config.vm.synced_folder "~/dev/git/gbif-drupal", "/var/www/d7", create: true, owner: conf['http_user'], group: conf['http_group'], mount_options: ["dmode=755", "fmode=644"]
-  #config.vm.synced_folder "~/dev/git/gbif-drupal", "/var/www/d7", create: true, type: "nfs"
+  config.vm.synced_folder "~/dev/git/gbif-drupal", "/var/www/d7", type: "nfs"
 
   config.vm.provider "virtualbox" do |vb|
     vb.gui = false
     vb.memory = conf['box_ram']
     vb.name = conf['project_machine_name'] + conf['drupal_core_version'] + "_" + conf['staging_env']
-    vb.cpus = 2
+    vb.cpus = 4
   
     # Use VBoxManage to customize the VM. For example to change memory:
     vb.customize ["modifyvm", :id, "--cpuexecutioncap", "90", "--memory", conf['box_ram'], "--ioapic", "on"]
