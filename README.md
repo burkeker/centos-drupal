@@ -1,3 +1,5 @@
+**REPOSITORY ARCHIVED.**
+
 centos-drupal
 =============
 
@@ -27,5 +29,5 @@ That's it.
 
 Visit [http://d7.centos-dev.local](http://d7.centos-dev.local) or [http://localhost:8083](http://localhost:8083)to visit the website. For the first visit it will take short while to load. After a few click-around the website should run with normal performance.
 
-###Debug
+### Debug
 This is still yet well tested. For now try import phpstorm/settings.jar.
